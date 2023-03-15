@@ -1,0 +1,32 @@
+on:
+  workflow_dispatch: {} # Allow manually kicking off builds
+  schedule:
+    - cron:  '0 0 * * *'
+name: TEST JOB
+jobs:
+  build:
+    name: Job Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
+        ref: master
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install py Dependencies
+      run: >
+        pip install --upgrade pip setuptools wheel
+        pip install -r requirements.txt
+
+    - name: scrape
+      env:
+        A: ${{ secrets.A }}
+        B: ${{ secrets.B }}
+        G: ${{ secrets.G }}
+        H: ${{ secrets.H }}
+      run: python fpct.py
